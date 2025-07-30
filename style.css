@@ -835,3 +835,119 @@ text-decoration: none; /* 🚫 Removes underline */
  gap: 20px;
  }
 }
+/* ====== Tablet Layout (≤ 992px) ====== */
+@media (max-width: 992px) {
+  .skills-wrapper,
+  .certifications-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ====== Mobile Layout (≤ 768px) ====== */
+@media (max-width: 768px) {
+  nav {
+    display: none;
+    flex-direction: column;
+    background: rgba(15, 32, 39, 0.95);
+    position: absolute;
+    top: 60px;
+    left: 0;
+    width: 100%;
+    text-align: center;
+    padding: 1rem 0;
+  }
+
+  nav.active {
+    display: flex;
+  }
+
+  nav a {
+    padding: 1rem;
+    border-top: 1px solid #444;
+    font-size: 1rem;
+  }
+
+  .hamburger {
+    display: block;
+  }
+
+  .about-container {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .profile-pic {
+    width: 300px;
+    height: 300px;
+  }
+
+
+  /* ✅ 2 skill cards per row on mobile */
+  @media (max-width: 768px) {
+  .skills-wrapper {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+  .certifications-grid {
+    grid-template-columns: 1fr;
+  }
+
+.social-icons {
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  form {
+    width: 90%;
+    padding: 1.2rem;
+    font-size: 0.9rem;
+  }
+
+  form input,
+  form textarea {
+    font-size: 0.95rem;
+    padding: 0.8rem;
+  }
+}
+
+
+/* ====== Small Devices (≤ 480px) ====== */
+@media (max-width: 480px) {
+  .cert-card,
+  .skill-item {
+    padding: 1rem;
+    font-size: 0.95rem;
+  }
+
+  .cert-card i,
+  .skill-item i {
+    font-size: 2rem;
+  }
+
+  form {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  form input,
+  form textarea {
+    font-size: 0.85rem;
+    padding: 0.7rem;
+  }
+
+  h2 {
+    font-size: 1.6rem;
+  }
+
+  .section {
+    padding: 2rem 1rem;
+  }
+}
+}
+@media (max-width: 768px) {
+  * {
+    cursor: default !important;
+  }
+}
