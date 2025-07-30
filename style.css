@@ -879,6 +879,7 @@ text-decoration: none; /* 🚫 Removes underline */
   .profile-pic {
     width: 300px;
     height: 300px;
+    padding: center;
   }
 
 
