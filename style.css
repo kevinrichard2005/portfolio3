@@ -637,8 +637,19 @@ nav a:hover {
   font-weight: bold;
 }
 body {
-  cursor: none; /* hide default cursor */
+  cursor: none;
 }
+
+@media (max-width: 768px) {
+  body {
+    cursor: default !important;
+  }
+
+  #custom-cursor {
+    display: none !important;
+  }
+}
+
 
 .custom-blue-cursor {
   position: fixed;
@@ -845,6 +856,15 @@ text-decoration: none; /* 🚫 Removes underline */
 
 /* ====== Mobile Layout (≤ 768px) ====== */
 @media (max-width: 768px) {
+  header {
+  padding: 0.6rem 1rem; /* smaller padding */
+  height: auto; /* allow content to set height */
+  background: var(--primary); /* ensure color match */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
   nav {
     display: none;
     flex-direction: column;
@@ -854,18 +874,19 @@ text-decoration: none; /* 🚫 Removes underline */
     left: 0;
     width: 100%;
     text-align: center;
-    padding: 1rem 0;
+    padding: 0.5rem 0;
+    border-top: 1px solid #444;
   }
 
   nav.active {
     display: flex;
   }
 
-  nav a {
-    padding: 1rem;
-    border-top: 1px solid #444;
-    font-size: 1rem;
-  }
+ nav a {
+  padding: 0.4rem 1rem;
+  font-size: 0.95rem;
+  line-height: 1.2;
+}
 
   .hamburger {
     display: block;
@@ -879,8 +900,16 @@ text-decoration: none; /* 🚫 Removes underline */
   .profile-pic {
     width: 300px;
     height: 300px;
-    padding: center;
+
   }
+  .logo {
+  font-size: 1.3rem;
+}
+
+.hamburger {
+  font-size: 1.8rem;
+}
+
 
 
   /* ✅ 2 skill cards per row on mobile */

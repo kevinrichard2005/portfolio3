@@ -80,3 +80,10 @@ document.addEventListener("mousemove", function (e) {
   cursor.style.top = e.clientY + "px";
   cursor.style.left = e.clientX + "px";
 });
+ScrollReveal().reveal('.scroll-animate', {
+  distance: '40px',
+  duration: 1000,
+  easing: 'ease-in-out',
+  origin: 'bottom',
+  interval: 150
+});
