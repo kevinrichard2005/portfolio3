@@ -1,0 +1,468 @@
+/* ===== FLIP CARDS FROM UIVERSE.IO ===== */
+.card {
+    width: 100%;
+    height: 400px;
+    perspective: 1000px;
+    cursor: pointer;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+    position: relative;
+}
+
+.card-inner {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Interaction: Flip on class toggle (Click/Tap) */
+.card.flipped .card-inner {
+    transform: rotateY(180deg);
+}
+
+.card-front,
+.card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+}
+
+.card-front {
+    background: var(--bg-card);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid rgba(67, 97, 238, 0.2);
+    box-shadow: var(--shadow-lg);
+    transform: rotateY(0deg);
+    position: relative;
+}
+
+.card-front .project-image {
+    width: 100%;
+    height: 70%;
+    overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+.card-front .project-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.card:hover .card-front .project-image img {
+    transform: scale(1.1);
+}
+
+.card-front .project-image::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 60%;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9), transparent);
+    z-index: 1;
+}
+
+.card-front h3 {
+    position: absolute;
+    bottom: 20px;
+    left: 0;
+    right: 0;
+    color: white;
+    font-size: 1.3rem;
+    text-align: center;
+    z-index: 2;
+    padding: 0 20px;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+.card-back {
+    background: linear-gradient(135deg, var(--bg-card) 0%, var(--bg-secondary) 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid var(--primary-color);
+    box-shadow: var(--shadow-xl);
+    transform: rotateY(180deg);
+    padding: 30px;
+}
+
+/* Unique Back Backgrounds */
+.projects-grid .card:nth-child(1) .card-back {
+    border-color: #4361ee;
+    background: linear-gradient(135deg, rgba(67, 97, 238, 0.1) 0%, rgba(67, 97, 238, 0.2) 100%), var(--bg-card);
+}
+
+.projects-grid .card:nth-child(2) .card-back {
+    border-color: #4cc9f0;
+    background: linear-gradient(135deg, rgba(76, 201, 240, 0.1) 0%, rgba(76, 201, 240, 0.2) 100%), var(--bg-card);
+}
+
+.projects-grid .card:nth-child(3) .card-back {
+    border-color: #f72585;
+    background: linear-gradient(135deg, rgba(247, 37, 133, 0.1) 0%, rgba(247, 37, 133, 0.2) 100%), var(--bg-card);
+}
+
+.projects-grid .card:nth-child(4) .card-back {
+    border-color: #7209b7;
+    background: linear-gradient(135deg, rgba(114, 9, 183, 0.1) 0%, rgba(114, 9, 183, 0.2) 100%), var(--bg-card);
+}
+
+.card-back .project-content {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    text-align: center;
+}
+
+.card-back h3 {
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    font-size: 1.3rem;
+}
+
+.card-back p {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 20px;
+    flex: 1;
+    font-size: 0.95rem;
+}
+
+.card-back .project-tech {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+.card-back .project-tech span {
+    background: rgba(67, 97, 238, 0.1);
+    color: var(--primary-color);
+    padding: 6px 12px;
+    border-radius: var(--radius-sm);
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.card-back .project-links {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+    justify-content: center;
+}
+
+.card-back .project-links .btn {
+    flex: 1;
+    max-width: 120px;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .card {
+        height: 350px;
+    }
+
+    .card-front h3 {
+        font-size: 1.1rem;
+        bottom: 15px;
+    }
+
+    .card-back {
+        padding: 20px;
+    }
+
+    .card-back h3 {
+        font-size: 1.1rem;
+    }
+
+    .card-back p {
+        font-size: 0.9rem;
+    }
+
+    .card-back .project-links {
+        flex-direction: column;
+    }
+
+    .card-back .project-links .btn {
+        max-width: 100%;
+    }
+}
+
+/* Flip hint */
+/* Flip hint */
+.card-front::before {
+    content: 'Click to flip';
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(67, 97, 238, 0.9);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card:hover .card-front::before {
+    opacity: 1;
+}
+
+@media (max-width: 768px) {
+    .card-front::before {
+        content: 'Tap to flip';
+        opacity: 1;
+    }
+}
+
+
+/* ===== SIMPLE BI-DIRECTIONAL SCROLL ANIMATIONS ===== */
+
+/* Section headers - slide from bottom */
+.section-header {
+    transform: translateY(50px);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.section-header.reveal {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+}
+
+.section-header.hide {
+    transform: translateY(50px);
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* About section - simple left/right slides */
+.about-image {
+    transform: translateX(-100px);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.about-image.reveal {
+    transform: translateX(0);
+    opacity: 1;
+    visibility: visible;
+}
+
+.about-image.hide {
+    transform: translateX(-100px);
+    opacity: 0;
+    visibility: hidden;
+}
+
+.about-text {
+    transform: translateX(100px);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.about-text.reveal {
+    transform: translateX(0);
+    opacity: 1;
+    visibility: visible;
+}
+
+.about-text.hide {
+    transform: translateX(100px);
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Certification cards - slide from right */
+.cert-card {
+    transform: translateX(80px) scale(0.95);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transition-delay: var(--stagger-delay, 0s);
+}
+
+.cert-card.reveal {
+    transform: translateX(0) scale(1);
+    opacity: 1;
+    visibility: visible;
+}
+
+.cert-card.hide {
+    transform: translateX(80px) scale(0.95);
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Skill cards - slide from bottom */
+.skill-card {
+    transform: translateY(40px);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    transition-delay: var(--stagger-delay, 0s);
+}
+
+.skill-card.reveal {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+}
+
+.skill-card.hide {
+    transform: translateY(40px);
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Timeline - slide from left */
+.timeline-item {
+    transform: translateX(-60px);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.timeline-item.reveal {
+    transform: translateX(0);
+    opacity: 1;
+    visibility: visible;
+}
+
+.timeline-item.hide {
+    transform: translateX(-60px);
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Contact form - slide from bottom */
+.form-container {
+    transform: translateY(60px) scale(0.98);
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.form-container.reveal {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+    visibility: visible;
+}
+
+.form-container.hide {
+    transform: translateY(60px) scale(0.98);
+    opacity: 0;
+    visibility: hidden;
+}
+
+/* Mobile - reduce animation distances */
+@media (max-width: 768px) {
+    .section-header {
+        transform: translateY(30px);
+    }
+
+    .section-header.hide {
+        transform: translateY(30px);
+    }
+
+    .about-image {
+        transform: translateX(-40px);
+    }
+
+    .about-image.hide {
+        transform: translateX(-40px);
+    }
+
+    .about-text {
+        transform: translateX(40px);
+    }
+
+    .about-text.hide {
+        transform: translateX(40px);
+    }
+
+    .cert-card {
+        transform: translateX(40px) scale(0.98);
+    }
+
+    .cert-card.hide {
+        transform: translateX(40px) scale(0.98);
+    }
+
+    .skill-card {
+        transform: translateY(30px);
+    }
+
+    .skill-card.hide {
+        transform: translateY(30px);
+    }
+
+    .form-container {
+        transform: translateY(30px) scale(0.98);
+    }
+
+    .form-container.hide {
+        transform: translateY(30px) scale(0.98);
+    }
+}
+
+/* Hover effects */
+.cert-card.reveal:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 15px 40px rgba(67, 97, 238, 0.25);
+}
+
+.skill-card.reveal:hover {
+    transform: translateY(-8px) scale(1.05);
+    box-shadow: 0 15px 40px rgba(67, 97, 238, 0.25);
+}
+
+/* FIX: Override conflicting animations for cards */
+.card {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+}
+
+/* Ensure cards in projects grid have proper spacing */
+.projects-grid .card {
+    margin: 0;
+    height: 400px;
+}
+
+/* Fix for mobile tap */
+@media (max-width: 768px) {
+    .projects-grid .card {
+        height: 350px;
+    }
+
+    /* Better touch experience */
+    .card {
+        touch-action: manipulation;
+    }
+}

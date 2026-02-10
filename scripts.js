@@ -1,5 +1,5 @@
 // Wait for DOM to be fully loaded
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // ===== DOM Elements =====
     const navToggle = document.getElementById('nav-toggle');
     const navMenu = document.getElementById('nav-menu');
@@ -17,10 +17,10 @@ document.addEventListener('DOMContentLoaded', function() {
             if (pageLoader) {
                 pageLoader.classList.add('hidden');
             }
-            
+
             // Initialize progress bars
             initializeProgressBars();
-            
+
             // Animate skill bars after a short delay
             setTimeout(() => {
                 animateSkillBars();
@@ -31,37 +31,39 @@ document.addEventListener('DOMContentLoaded', function() {
     // ===== PROGRESS BARS =====
     function initializeProgressBars() {
         const skillCards = document.querySelectorAll('.skill-card');
-        
+
         skillCards.forEach(card => {
             const progressBar = card.querySelector('.progress-bar');
-            
+
             if (progressBar) {
+                // Get width from data attribute
+                const width = progressBar.getAttribute('data-width') || '0';
+
                 // Reset to 0 for animation
                 progressBar.style.width = '0%';
                 progressBar.style.opacity = '1';
                 progressBar.style.visibility = 'visible';
+
+                // Store target width for animation
+                progressBar.dataset.targetWidth = width;
             }
         });
     }
 
     function animateSkillBars() {
         const skillCards = document.querySelectorAll('.skill-card');
-        
+
         skillCards.forEach((card, index) => {
             setTimeout(() => {
                 const progressBar = card.querySelector('.progress-bar');
-                
-                if (progressBar) {
-                    // Get width from data attribute or CSS variable
-                    const width = progressBar.getAttribute('data-width') || 
-                                 getComputedStyle(progressBar).getPropertyValue('--progress-width').replace('%', '');
-                    
+
+                if (progressBar && progressBar.dataset.targetWidth) {
                     // Animate to full width
-                    progressBar.style.width = `${width}%`;
-                    
-                    // Add reveal class for other animations
-                    card.classList.add('reveal');
+                    progressBar.style.width = `${progressBar.dataset.targetWidth}%`;
                 }
+
+                // Add reveal class for scroll animation
+                card.classList.add('reveal');
             }, index * 200);
         });
     }
@@ -75,9 +77,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function typeText() {
         if (!typingText) return;
-        
+
         const currentText = texts[textIndex];
-        
+
         if (isDeleting) {
             typingText.textContent = currentText.substring(0, charIndex - 1);
             charIndex--;
@@ -105,10 +107,10 @@ document.addEventListener('DOMContentLoaded', function() {
         navToggle.addEventListener('click', () => {
             const isActive = navMenu.classList.contains('active');
             navMenu.classList.toggle('active');
-            navToggle.innerHTML = isActive 
-                ? '<i class="fas fa-bars"></i>' 
+            navToggle.innerHTML = isActive
+                ? '<i class="fas fa-bars"></i>'
                 : '<i class="fas fa-times"></i>';
-            
+
             // Toggle body scroll
             document.body.style.overflow = isActive ? '' : 'hidden';
         });
@@ -139,12 +141,12 @@ document.addEventListener('DOMContentLoaded', function() {
         themeToggle.addEventListener('click', () => {
             document.body.classList.toggle('dark-mode');
             document.body.classList.toggle('light-mode');
-            
+
             const isDarkMode = document.body.classList.contains('dark-mode');
-            themeToggle.innerHTML = isDarkMode 
-                ? '<i class="fas fa-sun"></i>' 
+            themeToggle.innerHTML = isDarkMode
+                ? '<i class="fas fa-sun"></i>'
                 : '<i class="fas fa-moon"></i>';
-            
+
             localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
         });
 
@@ -189,7 +191,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.addEventListener('mousemove', (e) => {
             mouseX = e.clientX;
             mouseY = e.clientY;
-            
+
             cursorDot.style.left = `${mouseX}px`;
             cursorDot.style.top = `${mouseY}px`;
         });
@@ -197,13 +199,13 @@ document.addEventListener('DOMContentLoaded', function() {
         function animateCursor() {
             const dx = mouseX - cursorX;
             const dy = mouseY - cursorY;
-            
+
             cursorX += dx * 0.15;
             cursorY += dy * 0.15;
-            
+
             cursorOutline.style.left = `${cursorX}px`;
             cursorOutline.style.top = `${cursorY}px`;
-            
+
             requestAnimationFrame(animateCursor);
         }
 
@@ -217,7 +219,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 cursorOutline.style.height = '60px';
                 cursorOutline.style.borderColor = 'var(--accent-color)';
             });
-            
+
             element.addEventListener('mouseleave', () => {
                 cursorOutline.style.width = '40px';
                 cursorOutline.style.height = '40px';
@@ -237,13 +239,13 @@ document.addEventListener('DOMContentLoaded', function() {
         const contactForm = document.getElementById('contact-form');
         const successOverlay = document.getElementById('success-overlay');
         const closeSuccessBtn = document.getElementById('close-success');
-        
+
         if (!contactForm) return;
-        
+
         initFormValidation();
-        
+
         contactForm.addEventListener('submit', handleFormSubmit);
-        
+
         if (closeSuccessBtn) {
             closeSuccessBtn.addEventListener('click', () => {
                 successOverlay.classList.remove('active');
@@ -255,19 +257,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function initFormValidation() {
         const inputs = document.querySelectorAll('.input-wrapper input, .input-wrapper textarea');
-        
+
         inputs.forEach(input => {
             const formGroup = input.closest('.form-group');
-            
+
             input.addEventListener('focus', () => {
                 formGroup.classList.remove('error');
                 removeErrorMessage(formGroup);
             });
-            
+
             input.addEventListener('blur', () => {
                 validateInput(formGroup, input);
             });
-            
+
             input.addEventListener('input', () => {
                 if (formGroup.classList.contains('error')) {
                     validateInput(formGroup, input);
@@ -280,14 +282,14 @@ document.addEventListener('DOMContentLoaded', function() {
         const value = input.value.trim();
         const type = input.type;
         const isRequired = input.required;
-        
+
         removeErrorMessage(formGroup);
-        
+
         if (isRequired && !value) {
             showError(formGroup, `${getFieldName(input)} is required`);
             return false;
         }
-        
+
         if (type === 'email' && value) {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
             if (!emailRegex.test(value)) {
@@ -295,12 +297,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 return false;
             }
         }
-        
+
         if (input.id === 'message' && value.length < 10) {
             showError(formGroup, 'Message should be at least 10 characters');
             return false;
         }
-        
+
         formGroup.classList.remove('error');
         return true;
     }
@@ -312,7 +314,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function showError(formGroup, message) {
         formGroup.classList.add('error');
-        
+
         const errorElement = document.createElement('div');
         errorElement.className = 'error-message';
         errorElement.innerHTML = `
@@ -331,7 +333,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function resetFormValidation() {
         const formGroups = document.querySelectorAll('.form-group');
-        
+
         formGroups.forEach(group => {
             group.classList.remove('error');
             removeErrorMessage(group);
@@ -340,22 +342,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
     async function handleFormSubmit(e) {
         e.preventDefault();
-        
+
         const contactForm = document.getElementById('contact-form');
         const successOverlay = document.getElementById('success-overlay');
         const submitBtn = contactForm.querySelector('.submit-btn');
         const formData = new FormData(contactForm);
-        
+
         let isValid = true;
         const formGroups = contactForm.querySelectorAll('.form-group');
-        
+
         formGroups.forEach(group => {
             const input = group.querySelector('input, textarea');
             if (input && !validateInput(group, input)) {
                 isValid = false;
             }
         });
-        
+
         if (!isValid) {
             contactForm.classList.add('shake');
             setTimeout(() => {
@@ -363,10 +365,10 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 500);
             return;
         }
-        
+
         submitBtn.classList.add('loading');
         submitBtn.disabled = true;
-        
+
         try {
             const response = await fetch(contactForm.action, {
                 method: 'POST',
@@ -375,7 +377,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     'Accept': 'application/json'
                 }
             });
-            
+
             if (response.ok) {
                 setTimeout(() => {
                     successOverlay.classList.add('active');
@@ -385,7 +387,7 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 throw new Error('Form submission failed');
             }
-            
+
         } catch (error) {
             alert('Failed to send message. Please try again.');
             submitBtn.classList.remove('loading');
@@ -393,16 +395,66 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // ===== SIMPLIFIED SCROLL ANIMATIONS =====
+    const observerOptions = {
+        threshold: 0.1,
+        rootMargin: '0px 0px -50px 0px'
+    };
+
+    const animateOnScroll = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('reveal');
+                entry.target.classList.remove('hide');
+            }
+        });
+    }, observerOptions);
+
+    const elementsToAnimate = document.querySelectorAll(
+        '.section-header, .about-image, .about-text, ' +
+        '.project-card, .cert-card, .timeline-item, ' +
+        '.form-container, .skill-card'
+    );
+
+    elementsToAnimate.forEach(el => {
+        animateOnScroll.observe(el);
+    });
+
+    // ===== STAGGERED ANIMATIONS =====
+    function applyStaggeredDelays() {
+        const skillCards = document.querySelectorAll('.skill-card');
+        const certCards = document.querySelectorAll('.cert-card');
+        const cards = document.querySelectorAll('.project-card');
+
+        // Skill cards
+        skillCards.forEach((card, i) => {
+            card.style.setProperty('--stagger-delay', `${i * 0.15}s`);
+        });
+
+        // Certification cards
+        certCards.forEach((card, i) => {
+            card.style.setProperty('--stagger-delay', `${i * 0.1}s`);
+        });
+
+        // Project cards (flip cards)
+        cards.forEach((card, i) => {
+            card.style.setProperty('--stagger-delay', `${i * 0.2}s`);
+        });
+    }
+
     // ===== INITIALIZE EVERYTHING =====
     // Start typing animation after a delay
     setTimeout(typeText, 1000);
-    
+
     // Initialize contact form
     initContactForm();
-    
+
     // Set initial active link
     setActiveLink();
-    
+
+    // Apply staggered delays
+    setTimeout(applyStaggeredDelays, 500);
+
     // Add CSS variables for color manipulation
     const root = document.documentElement;
     root.style.setProperty('--primary-color-rgb', '67, 97, 238');
@@ -419,29 +471,68 @@ document.addEventListener('DOMContentLoaded', function() {
         clearTimeout(scrollTimeout);
         scrollTimeout = setTimeout(setActiveLink, 100);
     });
+    // ===== SCROLL PROGRESS & BACK TO TOP =====
+    const scrollProgress = document.getElementById('scroll-progress');
+    const backToTopBtn = document.getElementById('back-to-top');
+
+    function updateScroll() {
+        // Scroll Progress
+        if (scrollProgress) {
+            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
+            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrollPercent = (scrollTop / scrollHeight) * 100;
+            scrollProgress.style.width = `${scrollPercent}%`;
+        }
+
+        // Back to Top Button
+        if (backToTopBtn) {
+            if (window.scrollY > 300) {
+                backToTopBtn.classList.add('active');
+            } else {
+                backToTopBtn.classList.remove('active');
+            }
+        }
+    }
+
+    window.addEventListener('scroll', updateScroll);
+    updateScroll(); // Initial check
 });
-// ===== SHOW ALL SECTIONS =====
-function showAllSections() {
-    // Make all sections visible
-    document.querySelectorAll('section').forEach(section => {
-        section.style.opacity = '1';
-        section.style.visibility = 'visible';
-        section.style.transform = 'none';
-    });
-    
-    // Make all section headers visible
-    document.querySelectorAll('.section-header').forEach(header => {
-        header.style.opacity = '1';
-        header.style.visibility = 'visible';
-        header.style.transform = 'translateY(0)';
-        header.classList.add('reveal');
-    });
-    
-    // Make all content visible
-    document.querySelectorAll('.about-image, .about-text, .project-card, .cert-card, .timeline-item, .form-container').forEach(element => {
-        element.style.opacity = '1';
-        element.style.visibility = 'visible';
-        element.style.transform = 'none';
-        element.classList.add('reveal');
-    });
-}
+
+// ===== ENHANCED PARALLAX EFFECTS =====
+let parallaxTicking = false;
+
+window.addEventListener('scroll', () => {
+    if (!parallaxTicking) {
+        window.requestAnimationFrame(() => {
+            const scrolled = window.pageYOffset;
+
+            // Hero parallax
+            const heroSection = document.querySelector('.hero-section');
+            if (heroSection && scrolled < window.innerHeight) {
+                const heroImage = heroSection.querySelector('.hero-image');
+                const heroText = heroSection.querySelector('.hero-text');
+
+                if (heroImage) {
+                    // Reduced parallax intensity and reversed direction slightly to prevent overlap
+                    heroImage.style.transform = `translateY(${scrolled * 0.2}px) scale(${1 + scrolled * 0.0001})`;
+                }
+                if (heroText) {
+                    heroText.style.transform = `translateY(${scrolled * 0.15}px)`;
+                }
+            }
+
+            parallaxTicking = false;
+        });
+
+        parallaxTicking = true;
+    }
+}, { passive: true });
+
+
+window.addEventListener('load', () => {
+    // Reveal hero immediately
+    const heroSection = document.querySelector('.hero-section');
+    if (heroSection) {
+        heroSection.classList.add('reveal');
+    }
+});
