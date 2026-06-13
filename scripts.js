@@ -1,75 +1,228 @@
 // Wait for DOM to be fully loaded
 document.addEventListener('DOMContentLoaded', function () {
+    // ===== LENIS SMOOTH SCROLL =====
+    const lenis = new Lenis({
+        duration: 0.8, // Reduced from 1.2 for snappier feel
+        lerp: 0.1,    // Added lerp for smoother acceleration/deceleration
+        orientation: 'vertical',
+        gestureOrientation: 'vertical',
+        smoothWheel: true,
+        wheelMultiplier: 0.9, // Slightly reduced to prevent "runaway" scrolling
+        smoothTouch: false,
+        touchMultiplier: 1.5,
+        infinite: false,
+    })
+
+    function raf(time) {
+        lenis.raf(time)
+        requestAnimationFrame(raf)
+    }
+
+    requestAnimationFrame(raf)
+
+    // ===== SCROLL PROGRESS & BACK TO TOP BUTTON LOGIC =====
+    const scrollProgress = document.getElementById('scroll-progress');
+    const backToTopBtn = document.getElementById('back-to-top');
+
+    lenis.on('scroll', (e) => {
+        // Scroll Progress Bar Update
+        if (scrollProgress) {
+            const scrollTotal = document.documentElement.scrollHeight - window.innerHeight;
+            const progress = scrollTotal > 0 ? (e.scroll / scrollTotal) * 100 : 0;
+            scrollProgress.style.width = `${progress}%`;
+        }
+
+        // Back to top Button Fading
+        if (backToTopBtn) {
+            if (e.scroll > 300) {
+                backToTopBtn.classList.add('active');
+            } else {
+                backToTopBtn.classList.remove('active');
+            }
+        }
+    });
+
+    // ===== GSAP & SCROLLTRIGGER =====
+    gsap.registerPlugin(ScrollTrigger);
+
+    // Page Loader Fade Out
+    const pageLoader = document.getElementById('page-loader');
+
+    function hideLoader() {
+        if (pageLoader && pageLoader.style.display !== 'none') {
+            gsap.to(pageLoader, {
+                opacity: 0,
+                duration: 0.8,
+                ease: "power2.inOut",
+                onComplete: () => {
+                    pageLoader.style.display = 'none';
+                    initAnimations();
+                }
+            });
+        }
+    }
+
+    // Hide loader on window load OR after 3 seconds max (fallback)
+    window.addEventListener('load', hideLoader);
+    setTimeout(hideLoader, 3000);
+
+    function initAnimations() {
+        // Hero Section Animations
+        const heroTl = gsap.timeline();
+        heroTl.from(".hero-subtitle", { y: 30, opacity: 0, duration: 1, ease: "power3.out" })
+            .from(".hero-title", { y: 30, opacity: 0, duration: 1, ease: "power3.out" }, "-=0.7")
+            .from(".hero-role", { y: 30, opacity: 0, duration: 1, ease: "power3.out" }, "-=0.7")
+            .from(".hero-description", { y: 30, opacity: 0, duration: 1, ease: "power3.out" }, "-=0.7")
+            .from(".hero-buttons", { y: 30, opacity: 0, duration: 1, ease: "power3.out" }, "-=0.7")
+            .from(".hero-image", { scale: 0.9, opacity: 0, duration: 1.2, ease: "power3.out" }, "-=1");
+
+        // Section Headers
+        gsap.utils.toArray(".section-header").forEach(header => {
+            gsap.fromTo(header,
+                { y: 50, opacity: 0, visibility: "hidden" },
+                {
+                    scrollTrigger: {
+                        trigger: header,
+                        start: "top 85%",
+                    },
+                    y: 0,
+                    opacity: 1,
+                    visibility: "visible",
+                    duration: 1,
+                    ease: "power3.out"
+                }
+            );
+        });
+
+        // About Content
+        gsap.fromTo(".about-image",
+            { y: 50, opacity: 0, visibility: "hidden" },
+            {
+                scrollTrigger: {
+                    trigger: ".about-section",
+                    start: "top 80%",
+                },
+                y: 0,
+                opacity: 1,
+                visibility: "visible",
+                duration: 1,
+                ease: "power3.out"
+            }
+        );
+
+        gsap.fromTo(".about-text",
+            { y: 50, opacity: 0, visibility: "hidden" },
+            {
+                scrollTrigger: {
+                    trigger: ".about-section",
+                    start: "top 80%",
+                },
+                y: 0,
+                opacity: 1,
+                visibility: "visible",
+                duration: 1,
+                ease: "power3.out"
+            }
+        );
+
+        // Skill Cards Staggered
+        gsap.fromTo(".skill-card",
+            { y: 50, opacity: 0, visibility: "hidden" },
+            {
+                scrollTrigger: {
+                    trigger: ".skills-grid",
+                    start: "top 80%",
+                },
+                y: 0,
+                opacity: 1,
+                visibility: "visible",
+                duration: 0.8,
+                stagger: 0.1,
+                ease: "back.out(1.7)",
+                onStart: () => animateSkillBars()
+            }
+        );
+
+        // Project Cards
+        gsap.fromTo(".project-card, .card",
+            { y: 50, opacity: 0, visibility: "hidden" },
+            {
+                scrollTrigger: {
+                    trigger: ".projects-grid",
+                    start: "top 80%",
+                },
+                y: 0,
+                opacity: 1,
+                visibility: "visible",
+                duration: 1,
+                stagger: 0.2,
+                ease: "power3.out"
+            }
+        );
+
+        // Certification Cards
+        gsap.fromTo(".cert-card",
+            { y: 50, opacity: 0, visibility: "hidden" },
+            {
+                scrollTrigger: {
+                    trigger: ".certifications-grid",
+                    start: "top 80%",
+                },
+                y: 0,
+                opacity: 1,
+                visibility: "visible",
+                duration: 1,
+                stagger: 0.15,
+                ease: "power3.out"
+            }
+        );
+
+        // Timeline Items
+        gsap.utils.toArray(".timeline-item").forEach(item => {
+            gsap.fromTo(item,
+                { y: 50, opacity: 0, visibility: "hidden" },
+                {
+                    scrollTrigger: {
+                        trigger: item,
+                        start: "top 85%",
+                    },
+                    y: 0,
+                    opacity: 1,
+                    visibility: "visible",
+                    duration: 1,
+                    ease: "power3.out"
+                }
+            );
+        });
+
+        // Contact Form
+        gsap.fromTo(".form-container",
+            { y: 50, opacity: 0, visibility: "hidden" },
+            {
+                scrollTrigger: {
+                    trigger: ".contact-wrapper",
+                    start: "top 80%",
+                },
+                y: 0,
+                opacity: 1,
+                visibility: "visible",
+                duration: 1,
+                ease: "power3.out"
+            }
+        );
+
+        // Refresh ScrollTrigger to ensure all markers and trigger points are correct
+        ScrollTrigger.refresh();
+    }
+
     // ===== DOM Elements =====
     const navToggle = document.getElementById('nav-toggle');
     const navMenu = document.getElementById('nav-menu');
-    const themeToggle = document.getElementById('theme-toggle');
     const navLinks = document.querySelectorAll('.nav-link');
-    const contactForm = document.getElementById('contact-form');
     const typingText = document.getElementById('typing-text');
-    const cursorOutline = document.querySelector('[data-cursor-outline]');
-    const cursorDot = document.querySelector('[data-cursor-dot]');
-    const pageLoader = document.getElementById('page-loader');
-
-    // ===== PAGE LOADER =====
-    window.addEventListener('load', () => {
-        setTimeout(() => {
-            if (pageLoader) {
-                pageLoader.classList.add('hidden');
-            }
-
-            // Initialize progress bars
-            initializeProgressBars();
-
-            // Animate skill bars after a short delay
-            setTimeout(() => {
-                animateSkillBars();
-            }, 300);
-        }, 1000);
-    });
-
-    // ===== PROGRESS BARS =====
-    function initializeProgressBars() {
-        const skillCards = document.querySelectorAll('.skill-card');
-
-        skillCards.forEach(card => {
-            const progressBar = card.querySelector('.progress-bar');
-
-            if (progressBar) {
-                // Get width from data attribute
-                const width = progressBar.getAttribute('data-width') || '0';
-
-                // Reset to 0 for animation
-                progressBar.style.width = '0%';
-                progressBar.style.opacity = '1';
-                progressBar.style.visibility = 'visible';
-
-                // Store target width for animation
-                progressBar.dataset.targetWidth = width;
-            }
-        });
-    }
-
-    function animateSkillBars() {
-        const skillCards = document.querySelectorAll('.skill-card');
-
-        skillCards.forEach((card, index) => {
-            setTimeout(() => {
-                const progressBar = card.querySelector('.progress-bar');
-
-                if (progressBar && progressBar.dataset.targetWidth) {
-                    // Animate to full width
-                    progressBar.style.width = `${progressBar.dataset.targetWidth}%`;
-                }
-
-                // Add reveal class for scroll animation
-                card.classList.add('reveal');
-            }, index * 200);
-        });
-    }
 
     // ===== TYPING ANIMATION =====
-    const texts = ['Frontend Developer', 'Web Designer', 'BCA Student', 'Tech Enthusiast'];
+    const texts = ['Web Developer', 'Software Engineer', 'BCA Student', 'Tech Enthusiast'];
     let textIndex = 0;
     let charIndex = 0;
     let isDeleting = false;
@@ -92,7 +245,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (!isDeleting && charIndex === currentText.length) {
             isDeleting = true;
-            typingSpeed = 1000;
+            typingSpeed = 1500;
         } else if (isDeleting && charIndex === 0) {
             isDeleting = false;
             textIndex = (textIndex + 1) % texts.length;
@@ -102,437 +255,429 @@ document.addEventListener('DOMContentLoaded', function () {
         setTimeout(typeText, typingSpeed);
     }
 
-    // ===== MOBILE NAVIGATION =====
-    if (navToggle && navMenu) {
-        navToggle.addEventListener('click', () => {
-            const isActive = navMenu.classList.contains('active');
-            navMenu.classList.toggle('active');
-            navToggle.innerHTML = isActive
-                ? '<i class="fas fa-bars"></i>'
-                : '<i class="fas fa-times"></i>';
+    setTimeout(typeText, 2000);
 
-            // Toggle body scroll
-            document.body.style.overflow = isActive ? '' : 'hidden';
-        });
-
-        // Close menu when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!navMenu.contains(e.target) && !navToggle.contains(e.target) && navMenu.classList.contains('active')) {
-                navMenu.classList.remove('active');
-                navToggle.innerHTML = '<i class="fas fa-bars"></i>';
-                document.body.style.overflow = '';
+    // Skill Bar Animation Logic (called from GSAP)
+    function animateSkillBars() {
+        const skillCards = document.querySelectorAll('.skill-card');
+        skillCards.forEach(card => {
+            const progressBar = card.querySelector('.progress-bar');
+            if (progressBar) {
+                const width = progressBar.getAttribute('data-width') || '0';
+                progressBar.style.width = `${width}%`;
             }
         });
     }
 
-    // Close mobile menu when clicking nav links
-    navLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            if (navMenu && navMenu.classList.contains('active')) {
-                navMenu.classList.remove('active');
-                navToggle.innerHTML = '<i class="fas fa-bars"></i>';
-                document.body.style.overflow = '';
-            }
+    // Mobile Navigation logic (Keeping original)
+    if (navToggle && navMenu) {
+        navToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('active');
+            const isActive = navMenu.classList.contains('active');
+            navToggle.innerHTML = isActive
+                ? '<i class="fas fa-times"></i>'
+                : '<i class="fas fa-bars"></i>';
+        });
+    }
+
+
+
+    // Custom Cursor logic
+    const cursorDot = document.querySelector('[data-cursor-dot]');
+    const cursorOutline = document.querySelector('[data-cursor-outline]');
+
+    if (cursorDot && cursorOutline) {
+        window.addEventListener('mousemove', (e) => {
+            const { clientX: posX, clientY: posY } = e;
+
+            // Use GSAP for smoother cursor following
+            gsap.to(cursorDot, {
+                x: posX,
+                y: posY,
+                duration: 0,
+                overwrite: true
+            });
+
+            gsap.to(cursorOutline, {
+                x: posX,
+                y: posY,
+                duration: 0.15,
+                ease: "power2.out",
+                overwrite: true
+            });
+        });
+
+        // Hide cursor when leaving window
+        document.addEventListener('mouseleave', () => {
+            gsap.to([cursorDot, cursorOutline], { opacity: 0 });
+        });
+
+        document.addEventListener('mouseenter', () => {
+            gsap.to([cursorDot, cursorOutline], { opacity: 1 });
+        });
+    }
+
+    // ===== 10/10 MAGNETIC BUTTONS =====
+    const magneticBtns = document.querySelectorAll('.btn-primary, .btn-outline, .nav-logo, .social-icons a, .social-link');
+
+    magneticBtns.forEach(btn => {
+        btn.addEventListener('mousemove', function (e) {
+            const position = btn.getBoundingClientRect();
+            const x = e.clientX - position.left - position.width / 2;
+            const y = e.clientY - position.top - position.height / 2;
+
+            gsap.to(btn, {
+                x: x * 0.35,
+                y: y * 0.35,
+                duration: 0.4,
+                ease: "power2.out"
+            });
+        });
+
+        btn.addEventListener('mouseleave', function () {
+            gsap.to(btn, {
+                x: 0,
+                y: 0,
+                duration: 0.6,
+                ease: "elastic.out(1, 0.3)"
+            });
         });
     });
 
-    // ===== THEME TOGGLE =====
-    if (themeToggle) {
-        themeToggle.addEventListener('click', () => {
-            document.body.classList.toggle('dark-mode');
-            document.body.classList.toggle('light-mode');
+    // ===== 10/10 HERO SPOTLIGHT =====
+    const spotlight = document.querySelector('.hero-spotlight');
+    const hero = document.getElementById('home');
 
-            const isDarkMode = document.body.classList.contains('dark-mode');
-            themeToggle.innerHTML = isDarkMode
-                ? '<i class="fas fa-sun"></i>'
-                : '<i class="fas fa-moon"></i>';
+    if (hero && spotlight) {
+        hero.addEventListener('mousemove', (e) => {
+            const { clientX, clientY } = e;
+            const heroRect = hero.getBoundingClientRect();
+            const x = clientX - heroRect.left;
+            const y = clientY - heroRect.top;
 
-            localStorage.setItem('theme', isDarkMode ? 'dark' : 'light');
-        });
-
-        // Load saved theme
-        const savedTheme = localStorage.getItem('theme') || 'dark';
-        if (savedTheme === 'light') {
-            document.body.classList.replace('dark-mode', 'light-mode');
-            themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-        }
-    }
-
-    // ===== ACTIVE NAVIGATION LINK =====
-    function setActiveLink() {
-        const sections = document.querySelectorAll('section');
-        const scrollPos = window.scrollY + 100;
-
-        sections.forEach(section => {
-            const sectionTop = section.offsetTop;
-            const sectionHeight = section.clientHeight;
-            const sectionId = section.getAttribute('id');
-
-            if (scrollPos >= sectionTop && scrollPos < sectionTop + sectionHeight) {
-                navLinks.forEach(link => {
-                    link.classList.remove('active');
-                    if (link.getAttribute('href') === `#${sectionId}`) {
-                        link.classList.add('active');
-                    }
-                });
-            }
-        });
-    }
-
-    window.addEventListener('scroll', setActiveLink);
-
-    // ===== CUSTOM CURSOR =====
-    let mouseX = 0;
-    let mouseY = 0;
-    let cursorX = 0;
-    let cursorY = 0;
-
-    if (cursorDot && cursorOutline) {
-        document.addEventListener('mousemove', (e) => {
-            mouseX = e.clientX;
-            mouseY = e.clientY;
-
-            cursorDot.style.left = `${mouseX}px`;
-            cursorDot.style.top = `${mouseY}px`;
-        });
-
-        function animateCursor() {
-            const dx = mouseX - cursorX;
-            const dy = mouseY - cursorY;
-
-            cursorX += dx * 0.15;
-            cursorY += dy * 0.15;
-
-            cursorOutline.style.left = `${cursorX}px`;
-            cursorOutline.style.top = `${cursorY}px`;
-
-            requestAnimationFrame(animateCursor);
-        }
-
-        animateCursor();
-
-        const interactiveElements = document.querySelectorAll('a, button, .btn, input, textarea, .skill-card, .project-card, .cert-card');
-
-        interactiveElements.forEach(element => {
-            element.addEventListener('mouseenter', () => {
-                cursorOutline.style.width = '60px';
-                cursorOutline.style.height = '60px';
-                cursorOutline.style.borderColor = 'var(--accent-color)';
+            gsap.to(spotlight, {
+                x: x - 300,
+                y: y - 300,
+                duration: 0.8, // Snappier spotlight
+                ease: "power2.out"
             });
+        });
 
-            element.addEventListener('mouseleave', () => {
-                cursorOutline.style.width = '40px';
-                cursorOutline.style.height = '40px';
-                cursorOutline.style.borderColor = 'var(--primary-color)';
+        hero.addEventListener('mouseleave', () => {
+            gsap.to(spotlight, {
+                opacity: 0,
+                duration: 0.5
+            });
+        });
+
+        hero.addEventListener('mouseenter', () => {
+            gsap.to(spotlight, {
+                opacity: 0.5,
+                duration: 0.5
             });
         });
     }
 
-    // Hide custom cursor on mobile
-    if ('ontouchstart' in window) {
-        if (cursorDot) cursorDot.style.display = 'none';
-        if (cursorOutline) cursorOutline.style.display = 'none';
-    }
-
-    // ===== CONTACT FORM =====
-    function initContactForm() {
-        const contactForm = document.getElementById('contact-form');
-        const successOverlay = document.getElementById('success-overlay');
-        const closeSuccessBtn = document.getElementById('close-success');
-
-        if (!contactForm) return;
-
-        initFormValidation();
-
-        contactForm.addEventListener('submit', handleFormSubmit);
-
-        if (closeSuccessBtn) {
-            closeSuccessBtn.addEventListener('click', () => {
-                successOverlay.classList.remove('active');
-                contactForm.reset();
-                resetFormValidation();
-            });
-        }
-    }
-
-    function initFormValidation() {
-        const inputs = document.querySelectorAll('.input-wrapper input, .input-wrapper textarea');
-
-        inputs.forEach(input => {
-            const formGroup = input.closest('.form-group');
-
-            input.addEventListener('focus', () => {
-                formGroup.classList.remove('error');
-                removeErrorMessage(formGroup);
-            });
-
-            input.addEventListener('blur', () => {
-                validateInput(formGroup, input);
-            });
-
-            input.addEventListener('input', () => {
-                if (formGroup.classList.contains('error')) {
-                    validateInput(formGroup, input);
+    // ===== SMOOTH SCROLL FOR NAV AND ANCHORS =====
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = this.getAttribute('href');
+            if (target === '#') return;
+            
+            // Auto close mobile menu
+            if (navMenu && navMenu.classList.contains('active')) {
+                navMenu.classList.remove('active');
+                if (navToggle) {
+                    navToggle.innerHTML = '<i class="fas fa-bars"></i>';
                 }
+            }
+            
+            lenis.scrollTo(target);
+        });
+    });
+
+    // ===== CERTIFICATIONS DYNAMIC SORTING & VIEW MORE =====
+    const certGrid1 = document.querySelector('#certifications .certifications-grid');
+    const certMore = document.getElementById('certifications-more');
+    const certGrid2 = certMore ? certMore.querySelector('.certifications-grid') : null;
+    const allCerts = Array.from(document.querySelectorAll('.cert-card'));
+    const sortButtons = document.querySelectorAll('.cert-sort-btn');
+    const viewMoreBtn = document.getElementById('view-more-certs');
+
+    function parseDateString(dateStr) {
+        const yearMatch = dateStr.match(/\d{4}/);
+        const year = yearMatch ? parseInt(yearMatch[0]) : 0;
+        
+        let searchStr = dateStr;
+        if (dateStr.includes('-')) {
+            const parts = dateStr.split('-');
+            if (parts.length > 1) {
+                searchStr = parts[1];
+            }
+        }
+        
+        const months = {
+            'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4, 'may': 5, 'jun': 6,
+            'jul': 7, 'aug': 8, 'sep': 9, 'sept': 9, 'oct': 10, 'nov': 11, 'dec': 12
+        };
+        
+        let monthVal = 1;
+        searchStr = searchStr.toLowerCase();
+        
+        for (const [key, val] of Object.entries(months)) {
+            if (searchStr.includes(key)) {
+                monthVal = val;
+                break;
+            }
+        }
+        
+        return year * 12 + monthVal;
+    }
+
+    function sortAndRenderCertifications(sortBy) {
+        if (!certGrid1 || !certGrid2) return;
+
+        let sorted = [...allCerts];
+        
+        if (sortBy === 'date-desc') {
+            sorted.sort((a, b) => {
+                const dateA = a.querySelector('.cert-date') ? a.querySelector('.cert-date').textContent : '';
+                const dateB = b.querySelector('.cert-date') ? b.querySelector('.cert-date').textContent : '';
+                return parseDateString(dateB) - parseDateString(dateA);
+            });
+        } else if (sortBy === 'date-asc') {
+            sorted.sort((a, b) => {
+                const dateA = a.querySelector('.cert-date') ? a.querySelector('.cert-date').textContent : '';
+                const dateB = b.querySelector('.cert-date') ? b.querySelector('.cert-date').textContent : '';
+                return parseDateString(dateA) - parseDateString(dateB);
+            });
+        } else if (sortBy === 'alpha') {
+            sorted.sort((a, b) => {
+                const titleA = a.querySelector('h3') ? a.querySelector('h3').textContent.trim().toLowerCase() : '';
+                const titleB = b.querySelector('h3') ? b.querySelector('h3').textContent.trim().toLowerCase() : '';
+                return titleA.localeCompare(titleB);
+            });
+        }
+
+        // Clear and rebuild
+        certGrid1.innerHTML = '';
+        certGrid2.innerHTML = '';
+
+        sorted.forEach((card, index) => {
+            // Reset styles for GSAP animation
+            card.style.opacity = '';
+            card.style.visibility = '';
+            card.style.transform = '';
+            
+            if (index < 3) {
+                certGrid1.appendChild(card);
+            } else {
+                certGrid2.appendChild(card);
+            }
+        });
+
+        // Animate the main grid
+        gsap.fromTo(certGrid1.querySelectorAll(".cert-card"),
+            { y: 50, opacity: 0, visibility: "hidden" },
+            {
+                y: 0,
+                opacity: 1,
+                visibility: "visible",
+                duration: 0.8,
+                stagger: 0.15,
+                ease: "power3.out",
+                overwrite: "auto"
+            }
+        );
+        
+        // If expanded, animate more grid
+        if (certMore && certMore.style.display !== 'none') {
+            gsap.fromTo(certGrid2.querySelectorAll(".cert-card"),
+                { y: 50, opacity: 0, visibility: "hidden" },
+                {
+                    y: 0,
+                    opacity: 1,
+                    visibility: "visible",
+                    duration: 0.8,
+                    stagger: 0.15,
+                    ease: "power3.out",
+                    overwrite: "auto"
+                }
+            );
+        }
+        
+        ScrollTrigger.refresh();
+    }
+
+    if (sortButtons.length > 0) {
+        sortButtons.forEach(btn => {
+            btn.addEventListener('click', function() {
+                sortButtons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                const sortBy = this.getAttribute('data-sort');
+                sortAndRenderCertifications(sortBy);
             });
         });
     }
 
-    function validateInput(formGroup, input) {
-        const value = input.value.trim();
-        const type = input.type;
-        const isRequired = input.required;
-
-        removeErrorMessage(formGroup);
-
-        if (isRequired && !value) {
-            showError(formGroup, `${getFieldName(input)} is required`);
-            return false;
-        }
-
-        if (type === 'email' && value) {
-            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(value)) {
-                showError(formGroup, 'Please enter a valid email address');
-                return false;
+    if (viewMoreBtn && certMore) {
+        viewMoreBtn.addEventListener('click', () => {
+            if (certMore.style.display === 'none') {
+                certMore.style.display = 'block';
+                viewMoreBtn.textContent = 'View Less';
+                
+                // Animate elements entering
+                gsap.fromTo(certGrid2.querySelectorAll(".cert-card"),
+                    { y: 50, opacity: 0, visibility: "hidden" },
+                    {
+                        y: 0,
+                        opacity: 1,
+                        visibility: "visible",
+                        duration: 0.8,
+                        stagger: 0.15,
+                        ease: "power3.out"
+                    }
+                );
+            } else {
+                certMore.style.display = 'none';
+                viewMoreBtn.textContent = 'View More';
             }
-        }
-
-        if (input.id === 'message' && value.length < 10) {
-            showError(formGroup, 'Message should be at least 10 characters');
-            return false;
-        }
-
-        formGroup.classList.remove('error');
-        return true;
-    }
-
-    function getFieldName(input) {
-        const label = input.closest('.form-group').querySelector('label');
-        return label ? label.textContent.replace('Your ', '').replace('Email ', '') : 'This field';
-    }
-
-    function showError(formGroup, message) {
-        formGroup.classList.add('error');
-
-        const errorElement = document.createElement('div');
-        errorElement.className = 'error-message';
-        errorElement.innerHTML = `
-            <i class="fas fa-exclamation-circle"></i>
-            <span>${message}</span>
-        `;
-        formGroup.appendChild(errorElement);
-    }
-
-    function removeErrorMessage(formGroup) {
-        const errorMessage = formGroup.querySelector('.error-message');
-        if (errorMessage) {
-            errorMessage.remove();
-        }
-    }
-
-    function resetFormValidation() {
-        const formGroups = document.querySelectorAll('.form-group');
-
-        formGroups.forEach(group => {
-            group.classList.remove('error');
-            removeErrorMessage(group);
+            ScrollTrigger.refresh();
         });
     }
 
-    async function handleFormSubmit(e) {
-        e.preventDefault();
+    // Default sorting run
+    sortAndRenderCertifications('featured');
 
-        const contactForm = document.getElementById('contact-form');
-        const successOverlay = document.getElementById('success-overlay');
-        const submitBtn = contactForm.querySelector('.submit-btn');
-        const formData = new FormData(contactForm);
+    // ===== CONTACT FORM AJAX SUBMISSION =====
+    const contactForm = document.getElementById('contact-form');
+    const successOverlay = document.getElementById('success-overlay');
+    const closeSuccessBtn = document.getElementById('close-success');
+    const submitBtn = contactForm ? contactForm.querySelector('.submit-btn') : null;
 
-        let isValid = true;
-        const formGroups = contactForm.querySelectorAll('.form-group');
-
-        formGroups.forEach(group => {
-            const input = group.querySelector('input, textarea');
-            if (input && !validateInput(group, input)) {
-                isValid = false;
+    if (contactForm && successOverlay) {
+        contactForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            
+            if (submitBtn) {
+                submitBtn.classList.add('loading');
+                submitBtn.disabled = true;
+                const btnText = submitBtn.querySelector('.btn-text');
+                if (btnText) btnText.textContent = ''; // hide text for spinner overlay
             }
-        });
 
-        if (!isValid) {
-            contactForm.classList.add('shake');
-            setTimeout(() => {
-                contactForm.classList.remove('shake');
-            }, 500);
-            return;
-        }
+            const formData = new FormData(contactForm);
 
-        submitBtn.classList.add('loading');
-        submitBtn.disabled = true;
-
-        try {
-            const response = await fetch(contactForm.action, {
+            fetch(contactForm.action, {
                 method: 'POST',
                 body: formData,
                 headers: {
                     'Accept': 'application/json'
                 }
-            });
-
-            if (response.ok) {
-                setTimeout(() => {
+            })
+            .then(response => {
+                if (response.ok) {
                     successOverlay.classList.add('active');
+                    contactForm.reset();
+                } else {
+                    alert('Oops! Something went wrong, please try again.');
+                }
+            })
+            .catch(error => {
+                console.error('Form error:', error);
+                alert('Oops! There was a connection error, please try again.');
+            })
+            .finally(() => {
+                if (submitBtn) {
                     submitBtn.classList.remove('loading');
                     submitBtn.disabled = false;
-                }, 1000);
-            } else {
-                throw new Error('Form submission failed');
-            }
-
-        } catch (error) {
-            alert('Failed to send message. Please try again.');
-            submitBtn.classList.remove('loading');
-            submitBtn.disabled = false;
-        }
-    }
-
-    // ===== SIMPLIFIED SCROLL ANIMATIONS =====
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-
-    const animateOnScroll = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('reveal');
-                entry.target.classList.remove('hide');
-            }
-        });
-    }, observerOptions);
-
-    const elementsToAnimate = document.querySelectorAll(
-        '.section-header, .about-image, .about-text, ' +
-        '.project-card, .cert-card, .timeline-item, ' +
-        '.form-container, .skill-card'
-    );
-
-    elementsToAnimate.forEach(el => {
-        animateOnScroll.observe(el);
-    });
-
-    // ===== STAGGERED ANIMATIONS =====
-    function applyStaggeredDelays() {
-        const skillCards = document.querySelectorAll('.skill-card');
-        const certCards = document.querySelectorAll('.cert-card');
-        const cards = document.querySelectorAll('.project-card');
-
-        // Skill cards
-        skillCards.forEach((card, i) => {
-            card.style.setProperty('--stagger-delay', `${i * 0.15}s`);
-        });
-
-        // Certification cards
-        certCards.forEach((card, i) => {
-            card.style.setProperty('--stagger-delay', `${i * 0.1}s`);
-        });
-
-        // Project cards (flip cards)
-        cards.forEach((card, i) => {
-            card.style.setProperty('--stagger-delay', `${i * 0.2}s`);
-        });
-    }
-
-    // ===== INITIALIZE EVERYTHING =====
-    // Start typing animation after a delay
-    setTimeout(typeText, 1000);
-
-    // Initialize contact form
-    initContactForm();
-
-    // Set initial active link
-    setActiveLink();
-
-    // Apply staggered delays
-    setTimeout(applyStaggeredDelays, 500);
-
-    // Add CSS variables for color manipulation
-    const root = document.documentElement;
-    root.style.setProperty('--primary-color-rgb', '67, 97, 238');
-    root.style.setProperty('--secondary-color-rgb', '58, 12, 163');
-    root.style.setProperty('--accent-color-rgb', '76, 201, 240');
-    root.style.setProperty('--success-color-rgb', '74, 222, 128');
-    root.style.setProperty('--danger-color-rgb', '239, 68, 68');
-    root.style.setProperty('--text-primary-rgb', '33, 37, 41');
-    root.style.setProperty('--text-muted-rgb', '108, 117, 125');
-
-    // ===== PERFORMANCE OPTIMIZATION =====
-    let scrollTimeout;
-    window.addEventListener('scroll', () => {
-        clearTimeout(scrollTimeout);
-        scrollTimeout = setTimeout(setActiveLink, 100);
-    });
-    // ===== SCROLL PROGRESS & BACK TO TOP =====
-    const scrollProgress = document.getElementById('scroll-progress');
-    const backToTopBtn = document.getElementById('back-to-top');
-
-    function updateScroll() {
-        // Scroll Progress
-        if (scrollProgress) {
-            const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrollPercent = (scrollTop / scrollHeight) * 100;
-            scrollProgress.style.width = `${scrollPercent}%`;
-        }
-
-        // Back to Top Button
-        if (backToTopBtn) {
-            if (window.scrollY > 300) {
-                backToTopBtn.classList.add('active');
-            } else {
-                backToTopBtn.classList.remove('active');
-            }
-        }
-    }
-
-    window.addEventListener('scroll', updateScroll);
-    updateScroll(); // Initial check
-});
-
-// ===== ENHANCED PARALLAX EFFECTS =====
-let parallaxTicking = false;
-
-window.addEventListener('scroll', () => {
-    if (!parallaxTicking) {
-        window.requestAnimationFrame(() => {
-            const scrolled = window.pageYOffset;
-
-            // Hero parallax
-            const heroSection = document.querySelector('.hero-section');
-            if (heroSection && scrolled < window.innerHeight) {
-                const heroImage = heroSection.querySelector('.hero-image');
-                const heroText = heroSection.querySelector('.hero-text');
-
-                if (heroImage) {
-                    // Reduced parallax intensity and reversed direction slightly to prevent overlap
-                    heroImage.style.transform = `translateY(${scrolled * 0.2}px) scale(${1 + scrolled * 0.0001})`;
+                    const btnText = submitBtn.querySelector('.btn-text');
+                    if (btnText) btnText.textContent = 'Send Message';
                 }
-                if (heroText) {
-                    heroText.style.transform = `translateY(${scrolled * 0.15}px)`;
+            });
+        });
+    }
+
+    if (closeSuccessBtn && successOverlay) {
+        closeSuccessBtn.addEventListener('click', () => {
+            successOverlay.classList.remove('active');
+        });
+    }
+
+    // ===== HERO PARTICLE CANVAS =====
+    const canvas = document.getElementById('hero-canvas');
+    if (canvas) {
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+        const particleCount = 45;
+
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.offsetWidth;
+            canvas.height = canvas.parentElement.offsetHeight;
+        }
+
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 1;
+                this.speedX = Math.random() * 0.3 - 0.15;
+                this.speedY = Math.random() * 0.3 - 0.15;
+                this.alpha = Math.random() * 0.4 + 0.1;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                if (this.x < 0 || this.x > canvas.width) this.speedX = -this.speedX;
+                if (this.y < 0 || this.y > canvas.height) this.speedY = -this.speedY;
+            }
+
+            draw() {
+                ctx.fillStyle = `rgba(99, 102, 241, ${this.alpha})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            
+            for (let a = 0; a < particles.length; a++) {
+                for (let b = a + 1; b < particles.length; b++) {
+                    const dist = Math.hypot(particles[a].x - particles[b].x, particles[a].y - particles[b].y);
+                    if (dist < 110) {
+                        const alpha = (1 - dist / 110) * 0.12;
+                        ctx.strokeStyle = `rgba(99, 102, 241, ${alpha})`;
+                        ctx.lineWidth = 0.5;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[a].x, particles[a].y);
+                        ctx.lineTo(particles[b].x, particles[b].y);
+                        ctx.stroke();
+                    }
                 }
             }
+            requestAnimationFrame(animateParticles);
+        }
 
-            parallaxTicking = false;
-        });
-
-        parallaxTicking = true;
-    }
-}, { passive: true });
-
-
-window.addEventListener('load', () => {
-    // Reveal hero immediately
-    const heroSection = document.querySelector('.hero-section');
-    if (heroSection) {
-        heroSection.classList.add('reveal');
+        initParticles();
+        animateParticles();
     }
 });

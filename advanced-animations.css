@@ -241,9 +241,6 @@
 
 /* Section headers - slide from bottom */
 .section-header {
-    transform: translateY(50px);
-    opacity: 0;
-    visibility: hidden;
     transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -261,9 +258,6 @@
 
 /* About section - simple left/right slides */
 .about-image {
-    transform: translateX(-100px);
-    opacity: 0;
-    visibility: hidden;
     transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -280,9 +274,6 @@
 }
 
 .about-text {
-    transform: translateX(100px);
-    opacity: 0;
-    visibility: hidden;
     transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -300,9 +291,6 @@
 
 /* Certification cards - slide from right */
 .cert-card {
-    transform: translateX(80px) scale(0.95);
-    opacity: 0;
-    visibility: hidden;
     transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     transition-delay: var(--stagger-delay, 0s);
 }
@@ -321,9 +309,6 @@
 
 /* Skill cards - slide from bottom */
 .skill-card {
-    transform: translateY(40px);
-    opacity: 0;
-    visibility: hidden;
     transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
     transition-delay: var(--stagger-delay, 0s);
 }
@@ -342,9 +327,6 @@
 
 /* Timeline - slide from left */
 .timeline-item {
-    transform: translateX(-60px);
-    opacity: 0;
-    visibility: hidden;
     transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -362,9 +344,6 @@
 
 /* Contact form - slide from bottom */
 .form-container {
-    transform: translateY(60px) scale(0.98);
-    opacity: 0;
-    visibility: hidden;
     transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
